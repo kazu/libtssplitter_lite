@@ -215,7 +215,6 @@ int ReadTs(
 	{
 		int pid;
 		pid = GetPid(&buf[1]);
-
 		// PAT
 		if (0x0000 == pid)
 		{
@@ -310,7 +309,6 @@ int AnalyzePat(
 		for (i = 17; i < packet_length - 4; i = i + 4)
 		{
 			int service_id;
-			int tmp_pid;
 
 			// データの終了判定
 			// 最後の CRC の判定もしないといけないなあ
@@ -322,21 +320,11 @@ int AnalyzePat(
 			service_id = (buf[i] << 8) + buf[i + 1];
 			if (service_id == atoi(sid))
 			{
-				printf("ok pid: 0x%x\n",GetPid(&buf[i + 2]));
-				tmp_pid = GetPid(&buf[i + 2]);
-				if( pos == 0 ) {
-				  pos = i;
-				  *pmt_pid = tmp_pid;
-				}else{
-				  printf("pos: %d\n",pos);
-				}
-				//break;
-			}else{ // debug
-			   printf("sid: 0x%x pid 0x%x\n", service_id, GetPid(&buf[i + 2]));
+				*pmt_pid = GetPid(&buf[i + 2]);
+				break;
 			}
 		}
 	}
-	printf("pmt_pid 0x%x\n",*pmt_pid);
 
 	pids[*pmt_pid] = 1;
 
@@ -427,6 +415,12 @@ int AnalyzePmt(
 	// PCR
 	pcr = GetPid(&buf[13]);
 	pids[pcr] = 1;
+
+	if(0x9 == buf[17] ) {
+			int ca_pid;
+		        ca_pid = ((buf[17+4] & 0x1f)<<8)|buf[17+5];
+			pids[ca_pid] = 1;
+	}
 
 	N = ((buf[15] & 0x0F) << 4) + buf[16] + 16 + 1;
 
