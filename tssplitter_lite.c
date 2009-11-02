@@ -304,9 +304,8 @@ int AnalyzePat(
 
 	// ‘ÎÛƒ`ƒƒƒ“ƒlƒ‹”»’è
 	{
-		int i,packet_length;
-	 	packet_length = (int) buf[7];	
-		for (i = 17; i < packet_length - 4; i = i + 4)
+		int i
+		for (i = 17; i < LENGTH_PACKET - 4; i = i + 4)
 		{
 			int service_id;
 
@@ -321,6 +320,7 @@ int AnalyzePat(
 			if (service_id == atoi(sid))
 			{
 				*pmt_pid = GetPid(&buf[i + 2]);
+				pos = i;
 				break;
 			}
 		}
