@@ -305,10 +305,12 @@ int AnalyzePat(
 
 	// 対象チャンネル判定
 	{
-		int i;
-		for (i = 17; i < LENGTH_PACKET - 4; i = i + 4)
+		int i,packet_length;
+	 	packet_length = (int) buf[7];	
+		for (i = 17; i < packet_length - 4; i = i + 4)
 		{
 			int service_id;
+			int tmp_pid;
 
 			// データの終了判定
 			// 最後の CRC の判定もしないといけないなあ
@@ -320,13 +322,21 @@ int AnalyzePat(
 			service_id = (buf[i] << 8) + buf[i + 1];
 			if (service_id == atoi(sid))
 			{
-				*pmt_pid = GetPid(&buf[i + 2]);
-				pos = i;
-
-				break;
+				printf("ok pid: 0x%x\n",GetPid(&buf[i + 2]));
+				tmp_pid = GetPid(&buf[i + 2]);
+				if( pos == 0 ) {
+				  pos = i;
+				  *pmt_pid = tmp_pid;
+				}else{
+				  printf("pos: %d\n",pos);
+				}
+				//break;
+			}else{ // debug
+			   printf("sid: 0x%x pid 0x%x\n", service_id, GetPid(&buf[i + 2]));
 			}
 		}
 	}
+	printf("pmt_pid 0x%x\n",*pmt_pid);
 
 	pids[*pmt_pid] = 1;
 
