@@ -304,7 +304,7 @@ int AnalyzePat(
 
 	// ‘ÎÛƒ`ƒƒƒ“ƒlƒ‹”»’è
 	{
-		int i
+		int i;
 		for (i = 17; i < LENGTH_PACKET - 4; i = i + 4)
 		{
 			int service_id;
